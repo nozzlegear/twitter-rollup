@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2015",
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "outDir": "bin"
+    },
+    "files": [
+        "index.ts"
+    ],
+    "include": [
+        "./typings/**/*.d.ts"
+    ]
+}
