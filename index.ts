@@ -66,7 +66,7 @@ function toHtml(tweet: Twitter.Tweet) {
 
     if (isRetweet) {
         strings.push(`<strong>${username}</strong> retweeted <strong><a href='https://twitter.com/${tweet.retweeted_status.user.screen_name}'>@${tweet.retweeted_status.user.screen_name}</a></strong>:`)
-    } else if (tweet.is_quote_status) {
+    } else if (tweet.is_quote_status && tweet.quoted_status) {
         strings.push(`<strong>${username}</strong> quoted <strong><a href='https://twitter.com/${tweet.quoted_status.user.screen_name}'>@${tweet.quoted_status.user.screen_name}</a></strong>:`);
         text = text + `<blockquote>"${tweet.quoted_status.full_text}"</blockquote>`;
     } else {
