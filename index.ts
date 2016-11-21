@@ -20,14 +20,14 @@ function inspect(arg1: string | any, arg2?) {
     }
 }
 
-const getTweets = (username) => new Bluebird<Twitter.Tweet[]>((res, rej) => {
-    client.get("statuses/user_timeline", { screen_name: username, exclude_replies: true, tweet_mode: "extended" }, (err, tweets, resp) => {
+const getTweets = (username, sinceId: number) => new Bluebird<Twitter.Tweet[]>((res, rej) => {
+    client.get("statuses/user_timeline", { screen_name: username, since_id: sinceId || undefined, exclude_replies: true, tweet_mode: "extended" }, (err, tweets, resp) => {
         if (err) {
             inspect(`Error getting tweets for ${username}.`, { error: err, resp: resp.toJSON() });
         }
 
         // Don't break the app, just return 0 tweets.
-        res(tweets || []);
+        res(tweets && tweets.reverse() || []);
     })
 });
 
@@ -37,7 +37,7 @@ function toHtml(tweet: Twitter.Tweet) {
     const isRetweet = !!tweet.retweeted_status;
     const urls = (isRetweet ? tweet.retweeted_status.entities.urls : tweet.entities.urls) || [];
     const media = (isRetweet ? tweet.retweeted_status.entities.media : tweet.entities.media) || [];
-    const mentions = (isRetweet ? tweet.retweeted_status.entities.user_mentions : tweet.entities.user_mentions) || []; 
+    const mentions = (isRetweet ? tweet.retweeted_status.entities.user_mentions : tweet.entities.user_mentions) || [];
     let text = isRetweet ? tweet.retweeted_status.full_text : tweet.full_text;
 
     text = mentions.reduce((text, mention, index, array) => {
@@ -49,12 +49,12 @@ function toHtml(tweet: Twitter.Tweet) {
         text = text.substring(0, indices[0]) + (wrapperStart + mentionText + wrapperEnd) + text.substring(indices[1]);
 
         // All following index's should be `value + wrapperStart.length + wrapperEnd.length`;
-        for (let i = index + 1; i < array.length; i ++) {
+        for (let i = index + 1; i < array.length; i++) {
             const nextIndex = array[i].indices;
 
             nextIndex[0] = nextIndex[0] + wrapperStart.length + wrapperEnd.length;
             nextIndex[1] = nextIndex[1] + wrapperStart.length + wrapperEnd.length;
-        } 
+        }
 
         return text;
     }, text);
@@ -119,9 +119,22 @@ const sendRoundup = (html: string) => new Bluebird((res, rej) => {
 });
 
 async function start() {
+    const fileLocation = "./tweet-history.json";
+    let history: { [username: string]: { "lastTweetId": number } };
+
+    if (fs.existsSync(fileLocation)) {
+        history = JSON.parse(fs.readFileSync(fileLocation).toString());
+    } else {
+        history = {};
+    }
+    
     const username = ["jessecox", "crendor", "jkcompletesit", "facianea"];
     const tweets = await Bluebird.reduce(username, async (result, username) => {
-        result[username] = await getTweets(username);
+        const userHistory = history[username];
+        const tweets = await getTweets(username, userHistory && userHistory.lastTweetId);
+
+        result[username] = tweets;
+        history[username] = { lastTweetId: tweets[tweets.length - 1].id };
 
         return result;
     }, {} as { [username: string]: Twitter.Tweet[] });
@@ -133,7 +146,7 @@ async function start() {
             return html + `<div>No tweets for @${username}. Was there a problem with the program?</div>`;
         }
 
-        return html + userTweets.reverse().map(tweet => toHtml(tweet)).join("\n");
+        return html + userTweets.map(tweet => toHtml(tweet)).join("\n");
     }, "");
 
     try {
@@ -142,7 +155,7 @@ async function start() {
         inspect("Error sending roundup email", e);
     }
 
-    //fs.writeFileSync("./index.html", html);
+    fs.writeFileSync(fileLocation, JSON.stringify(history));
 }
 
 function scheduleRoundup() {

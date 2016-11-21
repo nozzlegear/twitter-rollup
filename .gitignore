@@ -1,3 +1,4 @@
 built/
 bin/
 node_modules/
+tweet-history.json
