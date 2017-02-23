@@ -134,12 +134,20 @@ async function start() {
         "jkcompletesit", 
         "facianea", 
         "pokekellz",
-        "shaperofstories", 
         "akamikeb", 
+		"tweetsauce",
+		"explainxkcd",
+		"hardcorehistory",
+		"dccommonsense",
         "patio11", 
         "wesbos", 
         "mpjme",
-        "track_trump"
+		"dan_abramov",
+        "nolanlawson",
+		"jacobrossi",
+		"shanselman",
+		"jdalton",
+		"JenMsft",
     ];
     const tweets = await Bluebird.reduce(usernames, async (result, username) => {
         const userHistory = history[username];
