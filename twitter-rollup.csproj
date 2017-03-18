@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="flurl" Version="2.3.0" />
+    <PackageReference Include="flurl.http" Version="1.1.2" />
+    <PackageReference Include="microsoft.extensions.commandlineutils" Version="1.1.0" />
+  </ItemGroup>
+</Project>
