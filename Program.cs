@@ -100,6 +100,8 @@ namespace twitter_rollup
                     }));
                 }
 
+                html += string.Join("\n", tweets.Select(t => TweetFormatter.ToHtml(t)));
+
                 if (arguments.TestFlag)
                 {
                     using (var file = File.OpenWrite(GetFilePath()))

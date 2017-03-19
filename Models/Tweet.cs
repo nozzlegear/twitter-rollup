@@ -35,7 +35,22 @@ namespace twitter_rollup.Models
 
         public bool is_quote_status { get; private set; }
 
-        public Tweet retweeted_status { get; set; }
+        public bool is_retweet { get; private set; }
+
+        private Tweet _retweeted_status { get; set; }
+
+        public Tweet retweeted_status 
+        {
+            get 
+            {
+                return _retweeted_status;
+            }
+            set
+            {
+                _retweeted_status = value;
+                is_retweet = value != null;
+            }
+        }
 
         public Tweet quoted_status { get; set; }
 
