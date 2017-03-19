@@ -3,3 +3,4 @@ bin/
 obj/
 node_modules/
 tweet-history.json
+*~ # vim temp files
