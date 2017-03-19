@@ -20,6 +20,25 @@ namespace twitter_rollup
             return Path.Combine(GetAppDirectory(), filename);
         }
 
+        /// <summary>
+        /// Takes a username and returns possible variants of it, e.g. username, @username
+        /// </summary>
+        static IEnumerable<string> GetUsernameVariants(string username)
+        {
+            return new List<string> { username, username.Replace("@", ""), "@" + username };
+        }
+
+        /// <summary>
+        /// Checks if a list of usernames contains any variant of one single username.    
+        /// </summary>
+        static bool HasMatch(IEnumerable<string> usernames, string username)
+        {
+            // Not sure if usernames will have an @, or if the username will have an @, so check for both.
+            var variants = GetUsernameVariants(username);
+
+            return usernames.Any(u => variants.Any(v => v.Equals(u, StringComparison.OrdinalIgnoreCase)));
+        }
+
         static void Main(string[] args)
         {
             var app = new CommandLineApplication(false);
@@ -51,23 +70,34 @@ namespace twitter_rollup
 
                     if (! arguments.WithKnownReplies)
                     {
-                        // TODO: Filter out all replies that aren't to self.
+                        var variants = GetUsernameVariants(username);
+
+                        // Filter out all replies that aren't to self.
+                        tweets.AddRange(userTweets.Where(t =>
+                        {
+                            if (t.is_quote_status || !t.is_reply_status)
+                            {
+                                return true;
+                            }
+
+                            return HasMatch(variants, t.in_reply_to_screen_name);
+                        }));
 
                         continue;
                     }
                        
-                    // TODO: Filter out all replies that aren't to a known user.
-                    userTweets.Where(t => 
+                    // Filter out all replies that aren't to a known user.
+                    tweets.AddRange(userTweets.Where(t => 
                     {
-                        if (!t.is_reply_status)
+                        if (t.is_quote_status || !t.is_reply_status)
                         {
                             return true;
                         }
 
-                        
+                        var targetUser = t.in_reply_to_screen_name;
 
-                        return true;
-                    });
+                        return HasMatch(arguments.Usernames, t.in_reply_to_screen_name);
+                    }));
                 }
 
                 if (arguments.TestFlag)
