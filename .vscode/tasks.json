@@ -15,7 +15,7 @@
         {
             "taskName": "test",
             "command": "",
-            "args": [ "dotnet build && dotnet bin/Debug/netcoreapp1.1/twitter-rollup.dll -h --known-replies --test" ],
+            "args": [ "dotnet build && dotnet bin/Debug/netcoreapp1.1/twitter-rollup.dll -t '${env:TWITTER_BEARER_TOKEN}' -u 'jessecox,crendor,akamikeb' --known-replies --test" ],
             "isTestCommand": true,
             "isShellCommand": true,
             "showOutput": "always",
