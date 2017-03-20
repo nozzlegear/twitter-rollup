@@ -51,7 +51,16 @@ namespace twitter_rollup
 
             app.OnExecute(async () => 
             {
-                arguments.Parse();
+                try
+                {
+                    arguments.Parse();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+
+                    return 1;
+                }
                 
                 var twitter = new TwitterClient(arguments.TwitterToken);
                 var tweets = new List<Tweet>();
