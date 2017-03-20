@@ -42,6 +42,7 @@ namespace twitter_rollup
         static void Main(string[] args)
         {
             var app = new CommandLineApplication(false);
+            var arguments = new Arguments(app);
             app.Name = "Twitter Rollup";
             app.Description = "A command line utility which pulls in tweets from a list of usernames and sends a summary to an email address.";
             
@@ -50,7 +51,8 @@ namespace twitter_rollup
 
             app.OnExecute(async () => 
             {
-                var arguments = new Arguments(app);
+                arguments.Parse();
+                
                 var twitter = new TwitterClient(arguments.TwitterToken);
                 var tweets = new List<Tweet>();
                 string subject = $"Twitter Rollup for {DateTime.Now.ToString("MMM dd, yyyy")}.";
