@@ -26,7 +26,7 @@ namespace twitter_rollup
 
         IFlurlClient PrepareRequest(string path)
         {
-            return Flurl.Url.Combine(BaseUrl, path).AllowAnyHttpStatus().WithOAuthBearerToken(Token);
+            return Flurl.Url.Combine(BaseUrl, path).AllowAnyHttpStatus().WithOAuthBearerToken(Base64Token);
         }
 
         public async Task<IEnumerable<Tweet>> GetTweetsForUser(string username, bool withReplies, long? sinceId = null)
