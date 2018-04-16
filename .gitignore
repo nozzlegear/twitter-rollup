@@ -5,3 +5,4 @@ tweet-history.json
 twitter-rollup-linux
 twitter-rollup-macos
 twitter-rollup-win.exe
+.env

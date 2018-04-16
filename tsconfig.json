@@ -1,15 +1,15 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es2015",
-        "noImplicitAny": false,
-        "sourceMap": true,
-        "outDir": "bin"
-    },
-    "files": [
-        "index.ts"
-    ],
-    "include": [
-        "./typings/**/*.d.ts"
-    ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2015",
+    "noImplicitAny": false,
+    "sourceMap": false,
+    "outDir": "dist",
+    "jsx": "react",
+    "experimentalDecorators": true
+  },
+  "exclude": [
+    "old_views",
+    "node_modules"
+  ]
 }
