@@ -10,4 +10,8 @@ RUN yarn install
 COPY . ./
 RUN yarn build
 
+# Expose the /etc/twitter-rollup folder as a volume, which lets the host machine persist the tweet history file to disk
+RUN mkdir -p /etc/twitter-rollup 
+VOLUME /etc/twitter-rollup
+
 CMD ["node", "/app/dist/index.js"]
