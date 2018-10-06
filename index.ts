@@ -30,13 +30,9 @@ const ensureHistoryFolder = async () => {
 const readHistoryFile = async () => {
     await ensureHistoryFolder();
 
-    if (!pathExists(historyFile)) {
-        return Option.ofNone();
-    }
+    const exists = await pathExists(historyFile);
 
-    const text = await readFile(historyFile);
-
-    return Option.ofSome(text);
+    return exists ? Option.ofSome(await readFile(historyFile)) : Option.ofNone();
 };
 const writeHistoryFile = async (history: History) => {
     await ensureHistoryFolder();
